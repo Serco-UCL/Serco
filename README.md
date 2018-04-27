@@ -1,37 +1,115 @@
-## Welcome to GitHub Pages
+Description
+-----------
 
-You can use the [editor on GitHub](https://github.com/Serco-UCL/Serco/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+This is the description of the tool.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Parameters
+----------
 
-### Markdown
+-   info
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+    If this parameter is used, the query will return the list of Usable
+    Collections \
+     \
 
-```markdown
-Syntax highlighted code block
+-   doc :
 
-# Header 1
-## Header 2
-### Header 3
+    If this parameter is used, the query will return the tool
+    documentation.\
+    \
 
-- Bulleted
-- List
+-   related : {collectionType:collection?}
 
-1. Numbered
-2. List
+    Type of collection and collection on which to base the search. If no
+    collection specified, the default one is used. \
+     \
 
-**Bold** and _Italic_ and `Code` text
+-   query : varchar()
 
-[Link](url) and ![Image](src)
-```
+    Character string that will be searched in the collection\
+    \
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+-   offset : int()
 
-### Jekyll Themes
+    Start position of the request\
+    \
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Serco-UCL/Serco/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+-   limit : int()
 
-### Support or Contact
+    Number of returned results\
+    \
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+-   order : ASC | DESC
+
+    Sort in ascending or descending order \
+    \
+
+-   format : xml | json | html
+
+    Response Format\
+    \
+
+-   lang : fr | en
+
+    Tool language\
+    \
+
+Output
+------
+
+#### ResponseHeader
+
+    array responseHeader {
+          Param[] params;
+          int status;
+          string error;
+          float QTime;
+        }
+        
+
+#### Response
+
+    array response {
+          int total;
+          int totalQueryReturned;
+          int nbFound;
+          int offset;
+          Doc[] docs;
+        }
+        
+
+### Output returned if param "info" used
+
+#### Response
+
+    array response {
+          int total;
+          int nbFound;
+          Collection_Type[] docs;
+        }
+        
+
+#### Collection\_Type
+
+    array Collection_Type {
+          int id;
+          string ref;
+          string name;
+          string description;
+          int xid_user;
+          int defaultColl;
+          Collection[] collections;
+        }
+        
+
+#### Collection
+
+    array Collection {
+          int id;
+          string ref;
+          string name;
+          string description;
+          int xid_CollectionType;
+          dateTime last_update;
+        }
+        
