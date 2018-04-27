@@ -10,49 +10,40 @@ Parameters
 
     If this parameter is used, the query will return the list of Usable
     Collections \
-     \
 
 -   doc :
 
     If this parameter is used, the query will return the tool
     documentation.\
-    \
 
 -   related : {collectionType:collection?}
 
     Type of collection and collection on which to base the search. If no
     collection specified, the default one is used. \
-     \
 
 -   query : varchar()
 
     Character string that will be searched in the collection\
-    \
 
 -   offset : int()
 
     Start position of the request\
-    \
 
 -   limit : int()
 
     Number of returned results\
-    \
 
 -   order : ASC | DESC
 
-    Sort in ascending or descending order \
-    \
+    Sort in ascending or descending order \ 
 
 -   format : xml | json | html
 
     Response Format\
-    \
 
 -   lang : fr | en
 
     Tool language\
-    \
 
 Output
 ------
