@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <style type="text/css" xml:space="preserve">@media print {#ghostery-purple-box {display:none !important}}</style>
+    <style type="text/css" xml:space="preserve">
+        pre {
+    /*display: inline-block;*/
+    padding: 5px ;
+    width: 300px;
+    /*margin-right: 20%;*/
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #EEE;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+    margin-top: 30px;
+    font-weight: 300;
+    color: #4653b4;
+}
+    body {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+    .param{
+        font-weight: bold;
+        margin: 0;
+        color: #369;
+    }
+    </style>
+  
+  </head>
+  <body>
+    <h2>
+      Description
+    </h2>
+      <p>
+          Ceci est la description de l'outil.
+      </p>  
+    <h2>
+      Liste des paramètres
+    </h2>
+      <ul>      
+      <li>
+          <p class="param">info</p> 
+          Si ce paramètre est utilisé, la requête retournera la liste des Collections utilisables <br /><br />
+      </li>
+        
+      <li>
+       <p class="param"> doc : </p>Si ce paramètre est utilisé, la requête retournera la documentation de l'outil.<br /><br />
+      </li>
+      <li>
+        <p class="param">related : {collectionType:collection?}</p>
+        Type de collection et collection sur lesquelles baser la recherche. Si aucune collection spécifiée, celle par défaut est utilisée.<br /><br />
+      </li>
+      <li>
+        <p class="param">query : varchar()</p>
+        Chaine de caractère qui va être recherchée dans la collection<br /><br />
+        
+      </li>
+      <li>
+        <p class="param">offset : int()</p>
+        La position à laquelle la requête va débuter<br /><br />
+      </li>
+      <li>
+        <p class="param">limit : int()</p>
+        Nombre de résultats retournés<br /><br />
+      </li>
+      <li>
+        <p class="param">order : ASC | DESC </p>
+        Classer par ordre ascendant ou descendant<br /><br />
+      </li>
+      <li>
+        <p class="param">format : xml | json | html </p>
+        Format de la réponse<br /><br />
+      </li>
+      <li>
+        <p class="param">lang : fr | en </p>
+        Langue de l'outil<br /><br />
+      </li>
+    </ul>
+
+    <h2>
+      Valeurs de retour
+    </h2>
+      
+    <h4>ResponseHeader</h4>
+    <pre>array responseHeader {
+      Param[] params;
+      int status;
+      string error;
+      float QTime;
+    }
+    </pre>
+      
+    <h4>Response</h4>
+    <pre>array response {
+      int total;
+      int totalQueryReturned;
+      int nbFound;
+      int offset;
+      Doc[] docs;
+    }
+    </pre>
+      
+    <h3>Valeurs de retour si le paramètre "info" est utilisé</h3>
+    
+    <h4>Response</h4>
+    <pre>array response {
+      int total;
+      int nbFound;
+      Collection_Type[] docs;
+    }
+    </pre>
+        
+    <h4>Collection_Type</h4>
+    <pre>array Collection_Type {
+      int id;
+      string ref;
+      string name;
+      string description;
+      int xid_user;
+      int defaultColl;
+      Collection[] collections;
+    }
+    </pre>
+        
+    <h4>Collection</h4>
+    <pre>array Collection {
+      int id;
+      string ref;
+      string name;
+      string description;
+      int xid_CollectionType;
+      dateTime last_update;
+    }
+    </pre>
+  </body>
+</html>

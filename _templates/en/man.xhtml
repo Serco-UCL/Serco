@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <style type="text/css" xml:space="preserve">@media print {#ghostery-purple-box {display:none !important}}</style>
+    <style type="text/css" xml:space="preserve">
+        pre {
+    /*display: inline-block;*/
+    padding: 5px ;
+    width: 300px;
+    /*margin-right: 20%;*/
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #EEE;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+    margin-top: 30px;
+    font-weight: 300;
+    color: #4653b4;
+}
+    body {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+    .param{
+        font-weight: bold;
+        margin: 0;
+        color: #369;
+    }
+    </style>
+  
+  </head>
+  <body>
+    <h2>
+      Description
+    </h2>
+      <p>
+          This is the description of the tool.
+      </p>  
+    <h2>
+      Parameters
+    </h2>
+      <ul>      
+      <li>
+        <p class="param">info</p> 
+        If this parameter is used, the query will return the list of Usable Collections <br /> <br />
+      </li>
+        
+      <li>
+       <p class="param"> doc : </p>
+       If this parameter is used, the query will return the tool documentation.<br /><br />
+      </li>
+      <li>
+        <p class="param">related : {collectionType:collection?}</p>
+        Type of collection and collection on which to base the search. If no collection specified, the default one is used. <br /> <br />      </li>
+      <li>
+        <p class="param">query : varchar()</p>
+        Character string that will be searched in the collection<br /><br />
+        
+      </li>
+      <li>
+        <p class="param">offset : int()</p>
+        Start position of the request<br /><br />
+      </li>
+      <li>
+        <p class="param">limit : int()</p>        
+        Number of returned results<br /><br />
+      </li>
+      <li>
+        <p class="param">order : ASC | DESC </p>
+        Sort in ascending or descending order <br /><br />
+      </li>
+      <li>
+        <p class="param">format : xml | json | html </p>
+        Response Format<br /><br />
+      </li>
+      <li>
+        <p class="param">lang : fr | en </p>
+        Tool language<br /><br />
+      </li>
+    </ul>
+
+    <h2>
+      Output
+    </h2>
+      
+    <h4>ResponseHeader</h4>
+    <pre>array responseHeader {
+      Param[] params;
+      int status;
+      string error;
+      float QTime;
+    }
+    </pre>
+      
+    <h4>Response</h4>
+    <pre>array response {
+      int total;
+      int totalQueryReturned;
+      int nbFound;
+      int offset;
+      Doc[] docs;
+    }
+    </pre>
+      
+    <h3>Output returned if param "info" used</h3>
+    
+    <h4>Response</h4>
+    <pre>array response {
+      int total;
+      int nbFound;
+      Collection_Type[] docs;
+    }
+    </pre>
+        
+    <h4>Collection_Type</h4>
+    <pre>array Collection_Type {
+      int id;
+      string ref;
+      string name;
+      string description;
+      int xid_user;
+      int defaultColl;
+      Collection[] collections;
+    }
+    </pre>
+        
+    <h4>Collection</h4>
+    <pre>array Collection {
+      int id;
+      string ref;
+      string name;
+      string description;
+      int xid_CollectionType;
+      dateTime last_update;
+    }
+    </pre>
+  </body>
+</html>
