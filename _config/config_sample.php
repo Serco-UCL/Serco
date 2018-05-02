@@ -31,6 +31,8 @@ return array(
     'DBuser' => "",
     'DBpass' => "",
     'DBname' => "",
+    'DBprefix' => "",
+
     //Language 
     'defautLocale' => "fr",
     'MailContact' => "",

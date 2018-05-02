@@ -71,7 +71,8 @@ class DBConnection
      *
      * @return Array 
      */
-    public function  getDbResult($tableName,$params=array(),$select="*",$orderBy='', $order='ASC', $offset="0", $limit="18446744073709551615"){    
+    public function  getDbResult($tableName,$params=array(),$select="*",$orderBy='', $order='ASC', $offset="0", $limit="18446744073709551615"){   
+        global $config;
         try { 
             $dbh = $this->dbh;
             $keys=array_keys($params);   
@@ -83,9 +84,9 @@ class DBConnection
                 }
             }
             if($orderBy!='')
-                $sql = 'SELECT '.$select.' FROM '.$tableName.' WHERE '.$where.' ORDER BY '.$orderBy.' '.$order.' LIMIT '.$offset.', '.$limit.' ';
+                $sql = 'SELECT '.$select.' FROM '.$config['DBprefix'].$tableName.' WHERE '.$where.' ORDER BY '.$orderBy.' '.$order.' LIMIT '.$offset.', '.$limit.' ';
             else
-                $sql = 'SELECT '.$select.' FROM '.$tableName.' WHERE '.$where.' LIMIT '.$offset.', '.$limit.' ';
+                $sql = 'SELECT '.$select.' FROM '.$config['DBprefix'].$tableName.' WHERE '.$where.' LIMIT '.$offset.', '.$limit.' ';
             
             $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             foreach ($params as $key => $value) {
@@ -112,6 +113,7 @@ class DBConnection
      * @return int 
      */
     public function  getNbreturn($tableName,$params=array()){    
+        global $config;
         try {  
             $dbh = $this->dbh;
             $keys=array_keys($params);   
@@ -123,7 +125,7 @@ class DBConnection
                 }
             }
 
-            $sql = 'SELECT COUNT(*) FROM '.$tableName.' WHERE '.$where;
+            $sql = 'SELECT COUNT(*) FROM '.$config['DBprefix'].$tableName.' WHERE '.$where;
             $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             foreach ($params as $key => $value) {
                  $sth->bindValue($key, '%'.$value.'%', PDO::PARAM_STR);
@@ -147,9 +149,10 @@ class DBConnection
      * @return int 
      */
     public function getNbTableRows($table){
+        global $config;
         try {    
             $dbh = $this->dbh;
-            $sql = 'SELECT COUNT(*) FROM '.$table;
+            $sql = 'SELECT COUNT(*) FROM '.$config['DBprefix'].$table;
             $sth = $dbh->prepare($sql); 
             $sth->execute(); 
             return $sth->fetchColumn(); 
