@@ -40,8 +40,28 @@
       Description
     </h2>
       <p>
-          This is the description of the tool.
-      </p>  
+          <H4>What is the purpose of the "Serco" ?</H4>
+          To offer a simple and adapted way for the realization of learning's exercises, to carry out searches in "collections" "freely accessible", "structured", "textual", "relatively big, "stables" and "adapted for learning"
+          <ul>      
+              <li>"collections" : A collection is a list of elements of the same type, of the same family.</li>
+              <li>"freely accessible" : The content of a collection must be completely free of access, use and dissemination. No private data or protected by any limitation of difusion's right can be made available to users by this service that is "Open".</li>
+              <li>"structured" : Each item in a collection is composed of the same list of fields as all items in the collection. (Typical example: an array of data, where each row represents one element and each column a field)</li>
+              <li>"textual" : The content of each field is composed of simple text and treated as such. Fields can contain any form of character string, which can be text, numbers, date or other. But searches are only performed based on the textual content of the field.</li>
+              <li>"relatively big" : The tool is intended to provide collections typically ranging from a few hundred items to several thousand,</li>
+              <li>"stables" : The collections made available through Serco must be little evolutive. They must be stable enough and require only a few updates, or ideally none.</li>
+              <li>"adapted for learning" : A collection must be able to be derived in "subsets" of the same structure, and to the content adapted to the different levels of study of the learners</li>
+          </ul>
+          Typical collection's example: the ICD10 classification (International Classification of Diseases) which, in Serco, can be derived in a series of "subsets" of the same structure, adapted to different levels of learners
+      </p>
+      <p>
+          <H4>How do we achieve this goal?</H4>
+          Mainly by the implementation of a service REST that handles all the necessary interactions with Serco and can be implemented in any system that needs to interact with the service.
+          Currently two implementations are freely available:
+          <ul>      
+              <li>A web interface</li>
+              <li>A Moodle's "QuestionType" plugin</li>
+          </ul>
+      </p>
     <h2>
       Parameters
     </h2>
@@ -97,19 +117,6 @@
       float QTime;
     }
     </pre>
-      
-    <h4>Response</h4>
-    <pre>array response {
-      int total;
-      int totalQueryReturned;
-      int nbFound;
-      int offset;
-      Doc[] docs;
-    }
-    </pre>
-      
-    <h3>Output returned if param "info" used</h3>
-    
     <h4>Response</h4>
     <pre>array response {
       int total;
@@ -120,24 +127,30 @@
         
     <h4>Collection_Type</h4>
     <pre>array Collection_Type {
-      int id;
       string ref;
       string name;
       string description;
-      int xid_user;
       int defaultColl;
       Collection[] collections;
+      Fields[] fields;
     }
     </pre>
         
     <h4>Collection</h4>
     <pre>array Collection {
-      int id;
       string ref;
       string name;
       string description;
-      int xid_CollectionType;
       dateTime last_update;
+    }
+    </pre>
+        
+    <h4>Field</h4>
+    <pre>array field {
+      string libelle;
+      string description;
+      int priority;
+      boolean searchable;
     }
     </pre>
   </body>

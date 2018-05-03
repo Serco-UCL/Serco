@@ -40,10 +40,30 @@
       Description
     </h2>
       <p>
-          Ceci est la description de l'outil.
-      </p>  
+          <H4>Quel est l'objectif du projet Serco ?</H4>
+          Offrir un moyen simple et adapté à la réalisation d'exercice d'apprentissage, d'effectuer des recherches dans des "collections" "librement accessibles", "structurées", "textuelles", "relativement grandes", "stables" et "adaptées à l'apprentissage"
+          <ul>      
+              <li> "collections" : Une collection est une liste d'éléments de même type, de la même famille.</li>
+              <li>"librement accessible" : Le contenu d'une collection doit être intégralement libre d'accès, d'utilisation et de diffusion. Aucune donnée privée ou protégée par une quelconque limitation de droit à la diffusion ne peut être mise à la disposition des utilisateurs par ce service qui se veut "Open".</li>
+              <li>"structurées" :  Chaque élément d'une collection est composé de la même liste de champs que tous les éléments de la collection. (Exemple type : un tableau de donnée. Ou chaque ligne représente un élément et chaque colonne un champ)</li>
+              <li>"textuelles" : Le contenu de chaque champ est composé de texte simple et traité comme tel. Les champs peuvent contenir toute forme de chaîne de caractères, pouvant représenter du texte, des chiffres, date ou autre. Mais les recherches ne sont effectuées que sur base du contenu textuel du champ.</li>
+              <li>"relativement grandes" : L'outil est prévu pour mettre à disposition des collections allant typiquement de quelques centaines d'éléments à plusieurs milliers,</li>
+              <li>"stables" : Les collections mises à disposition au travers Serco doivent être peu évolutives. Elles doivent être suffisamment stable et ne demander que de rares mises à jour, voire idéalement aucune.</li>
+              <li>"adaptée à l'apprentissage" : Une collection doit pouvoir être dérivée en "sous-ensembles" de même structure, et au contenu adapté aux différents niveaux d'étude des apprenants</li>
+          </ul>
+          Exemple type de collection : la classification  ICD10 (Classification Internationnales des maladies) qui, dans Serco, peut être dérivée en une série de "sous-ensembles" de même structure, adaptés aux différents niveaux d'étude des apprenants
+      </p>
+      <p>
+          <H4>Comment réalisons-nous cet objectif ?</H4>
+          Principalement par l'implémentation d'un service REST gérant toutes les interactions nécessaires avec Serco et pouvant être implémenté dans tout système nécessitant d'intéragir avec le service.
+          Actuellement deux implémentations sont librement disponibles :
+          <ul>      
+              <li>Une interface web</li>
+              <li>Un plug-in de type "questionType" pour Moodle</li>
+          </ul>
+      </p>
     <h2>
-      Liste des paramètres
+      Liste des commandes REST
     </h2>
       <ul>      
       <li>
@@ -101,18 +121,6 @@
     <h4>Response</h4>
     <pre>array response {
       int total;
-      int totalQueryReturned;
-      int nbFound;
-      int offset;
-      Doc[] docs;
-    }
-    </pre>
-      
-    <h3>Valeurs de retour si le paramètre "info" est utilisé</h3>
-    
-    <h4>Response</h4>
-    <pre>array response {
-      int total;
       int nbFound;
       Collection_Type[] docs;
     }
@@ -120,24 +128,30 @@
         
     <h4>Collection_Type</h4>
     <pre>array Collection_Type {
-      int id;
       string ref;
       string name;
       string description;
-      int xid_user;
       int defaultColl;
       Collection[] collections;
+      Fields[] fields;
     }
     </pre>
         
     <h4>Collection</h4>
     <pre>array Collection {
-      int id;
       string ref;
       string name;
       string description;
-      int xid_CollectionType;
       dateTime last_update;
+    }
+    </pre>
+        
+    <h4>Field</h4>
+    <pre>array field {
+      string libelle;
+      string description;
+      int priority;
+      boolean searchable;
     }
     </pre>
   </body>
