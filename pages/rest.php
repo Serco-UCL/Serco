@@ -31,7 +31,7 @@
  */
 $input = array_merge($_GET, $_POST);
 $request= new Request($input);
-if(isset($input['doc'])){
+if(isset($input['doc']) || count($input)==0){
     $doc = new Doc($request->getFormat(),$request->getLang());
     $response = $doc->getOutput();
 }
