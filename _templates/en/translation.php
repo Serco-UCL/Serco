@@ -26,4 +26,29 @@
 
 $string['emptylist']                        = 'Résultat de la recherche vide quand il n\'y a aucun critère de recherche';
 $string['emptylisttitle']                   = 'Résultat de recherche';
-$string['lang']                   = 'English';
+$string['lang']                             = 'English';
+$string['serviceName']                      = 'Francais';
+$string['serviceDescription']               = 'Francais';
+
+//Contact page
+$string['contactform']                      = 'Contact Form';
+$string['contacttype']                      = 'Contact type';
+$string['asknewcoll']                       = 'Asking for a new collection';
+$string['askfollowcoll']                    = 'Asking to follow a collection';
+$string['warnerrorcoll']                    = 'Warn about an error in a collection';
+$string['askdelinfopers']                   = 'Asking to delete all personnal informations';
+$string['simplecontact']                    = 'Simple contact';
+$string['linkedcoll']                       = 'Collection linked';
+$string['completename']                     = 'Complete name';
+$string['entercompletename']                = 'Enter your complete name';
+$string['email']                            = 'Email';
+$string['enteremail']                       = 'Enter your email';
+$string['message']                          = 'Message';
+$string['submit']                           = 'Submit';
+$string['askingmess']                       = 'Message from ';
+$string['success']                          = 'Success!';
+$string['error']                            = 'Error!';
+$string['successsend']                      = 'Your message has been successfully sent.';
+$string['erroccured']                       = 'An error occurred while sending the message.';
+$string['captcha']                          = 'Captcha';
+$string['reloadCaptcha']                    = 'Reload Captcha';

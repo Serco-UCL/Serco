@@ -29,3 +29,26 @@ $string['emptylisttitle']                   = 'Résultat de recherche';
 $string['lang']                             = 'Francais';
 $string['serviceName']                      = 'Francais';
 $string['serviceDescription']               = 'Francais';
+
+//Contact page
+$string['contactform']                      = 'Formulaire de contact';
+$string['contacttype']                      = 'Type de contact';
+$string['asknewcoll']                       = 'Demande d\'une nouvelle collection';
+$string['askfollowcoll']                    = 'Demande de suivis de collection';
+$string['warnerrorcoll']                    = 'Rapport une erreur dans une collection';
+$string['askdelinfopers']                   = 'Demande de suppression des informations personnelles';
+$string['simplecontact']                    = 'Simple contact';
+$string['linkedcoll']                       = 'Collections li&eacute;es';
+$string['completename']                     = 'Nom complet';
+$string['entercompletename']                = 'Entrez votre nom complet';
+$string['email']                            = 'Email';
+$string['enteremail']                       = 'Entrez votre email';
+$string['message']                          = 'Message';
+$string['submit']                           = 'Envoyer';
+$string['askingmess']                       = 'Message de ';
+$string['success']                          = 'Succ&egrave;s!';
+$string['error']                            = 'Erreur!';
+$string['successsend']                      = 'Votre message &agrave; &eacute;t&eacute; envoy&eacute; avec succ&egrave;s.';
+$string['erroccured']                       = 'Une erreur est survenue pendant l\'envoi de votre message.';
+$string['captcha']                          = 'Captcha';
+$string['reloadCaptcha']                    = 'Reg&eacute;n&eacute;rer captcha';

@@ -1,50 +1,58 @@
 <?php
-  echo" 
-    <h3>INPUT </h3>
-    <h4>list of usable params:</h4>
-  
-    <ul>
-        <li>related : {collectionType:collection?}</li>
-        <li>query : query of the search</li>
-        <li>offset : offset where the search begin</li>
-        <li>limit : maximum rows number</li>
-        <li> order : ASC | DESC</li>
-        <li>format : xml | json | html</li> 
- 
-    </ul>
+/*
+ * This file is part of the UCL-Serco
+ *
+ * Copyright (C) 2018 Université de Louvain-la-Neuve (UCL-TICE)
+ *
+ * Written by
+ *        Erin Dupuis   (erin.dupuis@uclouvain.be)
+ *        Arnaud Willame (arnaud.willame@uclouvain.be)
+ *        Domenico Palumbo (dominique.palumbo@uclouvain.be)
+ *
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
 
-  <h4>if contain 'info'</h4>
-  <ul>
-    <li>info : display the list of avaiable SearchType</li>
-  </ul>
-  
-  <h3>OUPUT </h3>
- ";
- 
-  
-   
-    echo "<h4>Query output</h4>". displayArray(false);
-    echo "<h4> Information output </h4>". displayArray(true);
-    
-//    echo displayArray(true);
-    
-    function displayArray($info){
-    $response=array();
-    $response['responseHeader']['params']=array('param1'=>'value1','param2'=>'value2');      
-    $response['responseHeader']['status']="{1 | -1}";
-    $response['responseHeader']['error']="String()";
-    $response['responseHeader']['QTime']= "float()";
-    $response['response']['total']="int()";
-    $response['response']['totalQueryReturned']="int()";
-    $response['response']['nbFound']="int()";
-    $response['response']['offset']="int()";
-    if($info)
-        $response['response']['docs']=array("Collection_Type"=>array(0=>array('row1'=>'value1','row2'=>'value2','collections'=>array(0=>array('row1'=>'value1','row2'=>'value2')),'fields'=>array(0=>array('row1'=>'value1','row2'=>'value2')))));
+
+    foreach (glob("./_includes/*.php") as $filename)
+    {
+        require_once $filename;
+    }
+    $config = include('./_config/config.php');
+
+    $input = array_merge($_GET, $_POST);
+    if(isset($input['lang']) && ($input['lang']=='en' || $input['lang']=='fr' ))
+       $locale=$input['lang'];
     else 
-        $response['response']['docs']=array(0=>array('row1'=>'value1','row22'=>'value2'));
-
-    return '<pre>' . var_export($response, true) . '</pre>';
+        $locale=$config['defautLocale'];
+    
+    if(!isset($input['action']) || $input['action']=='')
+        $input['action']='rest';
+    
+    switch ($input['action']){
+        case "rest" :            
+            require_once './pages/'.'rest.php';
+            break;
+        case "contact" :            
+            require_once './pages/'.'contact.php';
+            break;
 
     }
-   
-?>
+        
+function get_text($locale,$ref){ 
+    if(file_exists('./_templates/'.$locale.'/translation.php')){
+        include './_templates/'.$locale.'/translation.php';
+        return $string[$ref];  
+    }
+}

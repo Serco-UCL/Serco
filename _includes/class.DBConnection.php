@@ -162,5 +162,36 @@ class DBConnection
             return $return;  
         }
     }   
+    /**
+     * Insert contact message in database .
+     *
+     * @param String $name Name of the sender
+     * @param String $from Mail of the sender
+     * @param String $to mail of the receiver
+     * @param String subject subject of the emssage
+     * @param String message message sent
+     *
+     * @throws PDOException
+     *
+     * @return int 
+     */
+    public function setMessage($name,$from,$to,$subject,$msg){
+        global $config;
+        try {    
+            $dbh = $this->dbh;
+            $sql = 'INSERT INTO '.$config['DBprefix'].'Messages (name,sender, receiver,subject,message) VALUES (:name,:sender, :receiver, :subject, :message)';
+            $stmt = $dbh->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':sender', $from);
+            $stmt->bindParam(':receiver', $to);
+            $stmt->bindParam(':subject', $subject);
+            $stmt->bindParam(':message', $msg);
+            return $stmt->execute(); 
+        } catch (PDOException $e) {
+            $return['status']=-1;
+            $return['error']='Database Connection failed: ' . $e->getMessage();
+            return $return;  
+        }
+    }   
   
 }

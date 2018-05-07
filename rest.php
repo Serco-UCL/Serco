@@ -32,6 +32,11 @@
     $config = include('./_config/config.php');
 
     $input = array_merge($_GET, $_POST);
+    if(isset($input['lang']) && ($input['lang']=='en' || $input['lang']=='fr' ))
+       $locale=$input['lang'];
+    else 
+        $locale=$config['defautLocale'];
+    
     if(!isset($input['action']) || $input['action']=='')
         $input['action']='rest';
     
@@ -39,12 +44,17 @@
         case "rest" :            
             require_once './pages/'.'rest.php';
             break;
+        case "contact" :            
+            require_once './pages/'.'contact.php';
+            break;
 
     }
         
 function get_text($locale,$ref){ 
-    if(file_exists(dirname(__FILE__).'/_templates/'.$locale.'/translation.php')){
-        include_once dirname(__FILE__).'/_templates/'.$locale.'/translation.php';
+    if(file_exists('./_templates/'.$locale.'/translation.php')){
+        include './_templates/'.$locale.'/translation.php';
+//        print_r($string[$ref]);
         return $string[$ref];  
     }
+//    else return 'AAAA';
 }
