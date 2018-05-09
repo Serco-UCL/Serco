@@ -25,7 +25,7 @@ if (isset($input['requestType']) && isset($input['request']) && isset($input['em
         break;
     case 1:
         $subject=get_text($locale,"asknewcoll");
-        $message=get_text($locale,"asknewcoll")." : \n\r";
+        $message=get_text($locale,"asknewcoll")." : \n\r  ".get_text($locale,"label")." : ".$input['colLib']." \n\r ".get_text($locale,"description")." : ".$input['colDesc']."\n\r ";
         break;
     case 2:
         $subject=get_text($locale,"askfollowcoll");
@@ -68,10 +68,12 @@ else{
                 <strong>'.get_text($locale,"error").'</strong> '.get_text($locale,"erroccured").'
             </div>';
     }
-    $requestType=(isset($input['requestType'])) ? $input['requestType']:'0';
+    $requestType=(isset($input['requestType'])) ? $input['requestType']:'1';
     $request=(isset($input['request'])) ? $input['request']:'';
     $email=(isset($input['email'])) ? $input['email']:'';
     $name=(isset($input['name'])) ? $input['name']:'';
+    $colLib=(isset($input['colLib'])) ? $input['colLib']:'';
+    $colDesc=(isset($input['colDesc'])) ? $input['colDesc']:'';
     $collections=(isset($input['collection'])) ? $input['collection']:array();
 
     $obj2=json_decode($obj,true);
@@ -83,7 +85,8 @@ else{
         }
     }
     $return.='
-        <form>
+        <form  method="post">
+            <div class="well">
               <div class="form-group">
                 <label for="name">'.get_text($locale,"completename").'</label>
                 <input type="text" class="form-control" id="name" name="name" value="'.$name.'"  placeholder="'.get_text($locale,'entercompletename').'" required>
@@ -93,41 +96,61 @@ else{
                 <input required type="email" class="form-control" id="email" name="email" value="'.$email.'"   aria-describedby="emailHelp" placeholder="'.get_text($locale,"enteremail").'">
                 <!-- <small id="emailHelp" class="form-text text-muted">We\'ll never share your email with anyone else.</small>-->
               </div>
-            <div id="msgType" class="form-group">
-              <label for="Select1">'.get_text($locale,"contacttype").'</label>
-              <select name="requestType" class="form-control" value="'.$requestType.'"   id="Select1">                      
-                <option id="sel0" value="0" >'.get_text($locale,"simplecontact").'</option>
-                <option id="sel1" value="1" >'.get_text($locale,"asknewcoll").'</option>
-                <option id="sel2" value="2" >'.get_text($locale,"askfollowcoll").'</option>
-                <option id="sel3" value="3" >'.get_text($locale,"warnerrorcoll").'</option>
-                <option id="sel4" value="4" >'.get_text($locale,"askdelinfopers").'</option>
-              </select>
+              <small id="emailHelp" class="form-text text-muted">'.get_text($locale,"privateDataUse").'</small>
             </div>
-            <div id="linkedCol" class="form-group"  style="display: none">
-              <label for="Select2">'.get_text($locale,"linkedcoll").'</label>
-              <select multiple="multiple" name="collection[]" class="form-control" value="'.$collection.'"  id="Select2">
-               ';
-                for($i=0;$i<count($response);$i++){
-                    $return.='<option id="ref_'.$response[$i]["ref"].'" class="optionGroup" value="'.$response[$i]['ref'].'" >'.$response[$i]['name'].'</option>';
-                    for($i2=0;$i2<count($response[$i]['collections']);$i2++){
-                         $return.='<option id="ref_'.$response[$i]['ref'].'_'.$response[$i]['collections'][$i2]['ref'].'" class="optionChild" value="'.$response[$i]['ref'].'_'.$response[$i]['collections'][$i2]['ref'].'">'.$response[$i]['collections'][$i2]['name'].'</option>';
-                    }
-                    $return.='</optgroup>';
-                }
-                $return.='</select>
-            </div>
-            <div id="msg" class="form-group">
-              <label for="request">'.get_text($locale,"message").'</label>
-              <textarea class="form-control" name ="request" id="request" rows="3" required>'.$request.'</textarea>
-            </div>';
-            $return.='
+            
+            <div class="well">           
+                <div id="msgType" class="form-group">
+                  <label for="Select1">'.get_text($locale,"contacttype").'</label>
+                  <select name="requestType" class="form-control" value="'.$requestType.'"   id="Select1">                      
+                    <option id="sel1" value="1" >'.get_text($locale,"asknewcoll").'</option>
+                    <option id="sel2" value="2" >'.get_text($locale,"askfollowcoll").'</option>
+                    <option id="sel3" value="3" >'.get_text($locale,"warnerrorcoll").'</option>
+                    <option id="sel4" value="4" >'.get_text($locale,"askdelinfopers").'</option>
+                    <option id="sel0" value="0" >'.get_text($locale,"simplecontact").'</option>
+                  </select>
+                </div>
+                
+                <div id="collInfos" >
+                    <div class="form-group">
+                        <label for="colLib">'.get_text($locale,"colLib").'</label>
+                        <input type="text" class="form-control" id="colLib" name="colLib" value="'.$colLib.'"  placeholder="'.get_text($locale,'entercolLib').'" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="colDesc">'.get_text($locale,"colDesc").'</label>
+                        <input type="text" class="form-control" id="colDesc" name="colDesc" value="'.$colDesc.'"  placeholder="'.get_text($locale,'entercolDesc').'" required>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="name">'.get_text($locale,"captcha").'</label>
-                <p><img id="imgCaptcha" src="./pages/captcha.php">
-                <button type="button" id="regen" class="btn btn-info">'.get_text($locale,"reloadCaptcha").'</button> </p>
-                <input type="text" class="form-control" id="captcha" name="captcha" required>
-              </div>
+
+                <div id="linkedCol" class="form-group"  style="display: none">
+                  <label for="Select2">'.get_text($locale,"linkedcoll").'</label>
+                  <select multiple="multiple" name="collection[]" class="form-control" value="'.$collection.'"  id="Select2">
+                   ';
+                    for($i=0;$i<count($response);$i++){
+                        $return.='<option id="ref_'.$response[$i]["ref"].'" class="optionGroup" value="'.$response[$i]['ref'].'" >'.$response[$i]['name'].'</option>';
+                        for($i2=0;$i2<count($response[$i]['collections']);$i2++){
+                             $return.='<option id="ref_'.$response[$i]['ref'].'_'.$response[$i]['collections'][$i2]['ref'].'" class="optionChild" value="'.$response[$i]['ref'].'_'.$response[$i]['collections'][$i2]['ref'].'">'.$response[$i]['collections'][$i2]['name'].'</option>';
+                        }
+                        $return.='</optgroup>';
+                    }
+                    $return.='</select>
+                </div>
+                <div id="msg" class="form-group">
+                  <label for="request">'.get_text($locale,"message").'</label>
+                  <textarea class="form-control" name ="request" id="request" rows="3" required>'.$request.'</textarea>
+                </div>
+            </div>';
+                    
+            $return.='
+            <div class="well">
+                <div class="form-group">
+                    <label for="name">'.get_text($locale,"captcha").'</label>
+                    <p><img id="imgCaptcha" src="./pages/captcha.php">
+                    <button type="button" id="regen" class="btn btn-info">'.get_text($locale,"reloadCaptcha").'</button> </p>
+                    <input type="text" class="form-control" id="captcha" name="captcha" required>
+                  </div>
+            </div>
 
             <input type="hidden" name="action" value="contact">
             <div class="form-group">
@@ -148,6 +171,18 @@ else{
             if($('#Select1').val() != '1' && $('#Select1').val() != '4' && $('#Select1').val() != '0'){ 
                 $('#linkedCol').show();
             }
+
+            //Hide/show collections info
+            $('#Select1').change(function(){
+               if($(this).val() == '1'){ 
+                   $('#collInfos').show();
+               }
+               else {
+                $('#collInfos').hide();
+               }
+            });
+
+
             //Hide/show collections
             $('#Select1').change(function(){
                if($(this).val() == '1' || $('#Select1').val() == '4' || $('#Select1').val() == '0'){ 
