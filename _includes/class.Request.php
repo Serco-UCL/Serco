@@ -47,6 +47,7 @@ class Request{
     private $query;
     private $docs;
     private $order;
+    private $bootstrapTable;
     private $format;
     private $lang;
     private $output;
@@ -78,6 +79,7 @@ class Request{
         $this->limit = intval((isset($input['limit'])) ? $input['limit'] : '99999999999999999999');
         $this->format = (isset($input['format'])) ? $input['format'] : 'json';
         $this->order = ((isset($input['order']) && ( $input['order']=='ASC' || $input['order']=='DESC' )) ? $input['order'] : 'ASC');  
+        $this->bootstrapTable = ((isset($input['bootstrapTable']) ) ? 'true' : 'false');  
                 
     }
     
@@ -123,6 +125,10 @@ class Request{
     }
     public function getOrder(){
         return $this->order;
+    }
+    
+    public function getBootstrapTable(){
+        return $this->bootstrapTable;
     }
     public function getFormat(){
         return $this->format;

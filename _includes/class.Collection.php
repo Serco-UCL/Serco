@@ -41,13 +41,11 @@ class Collection extends Collection_Type
     private $last_update;
     private $return;
     
-    public function __construct($ref){
+    public function __construct($ref,$coll){
         parent::__construct($ref);  
-            
             $db = new DBConnection();  
             //get collection information based on ref and collection type
-            $return = $db->getDbResult('Collection',array('xid_CollectionType'=>$this->id,'ref'=>$ref));
-               
+            $return = $db->getDbResult('Collection',array('ref'=>$coll));
             $this->return = $return;
             $this->id_coll =$return[0]['id'];
             $this->ref_coll =$return[0]['ref'];
@@ -55,5 +53,9 @@ class Collection extends Collection_Type
             $this->description_coll =$return[0]['description'];
             $this->xid_CollectionType =$return[0]['xid_CollectionType'];
             $this->last_update =$return[0]['last_update'];  
+    }
+    
+    function getNameCol(){
+        return $this->name_coll;
     }
 }

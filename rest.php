@@ -47,14 +47,16 @@
         case "contact" :            
             require_once './pages/'.'contact.php';
             break;
+            break;
+        case "include" :            
+            require_once './pages/'.'include.php';
+            break;
 
     }
         
 function get_text($locale,$ref){ 
     if(file_exists('./_templates/'.$locale.'/translation.php')){
         include './_templates/'.$locale.'/translation.php';
-//        print_r($string[$ref]);
         return $string[$ref];  
     }
-//    else return 'AAAA';
 }

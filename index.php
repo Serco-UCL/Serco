@@ -47,6 +47,10 @@
         case "contact" :            
             require_once './pages/'.'contact.php';
             break;
+            break;
+        case "include" :            
+            require_once './pages/'.'include.php';
+            break;
 
     }
         

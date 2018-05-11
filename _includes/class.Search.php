@@ -51,25 +51,42 @@ class Search extends Request{
             if($fields[$i]['searchable']=="1")                
                 $queryTable[$fields[$i]['libelle']]=$this->getQuery();
         }              
-        $select = implode (", ", $fiedsLabel);
-        
+        $select = implode (", ", $fiedsLabel);       
         
         //get nb return of request without limit et offset
         $this->totalQueryReturned= $db->getNbreturn($DBTableName,$queryTable);
         //get request response
         $return = $db->getDbResult($DBTableName,$queryTable,$select,$fields[0]['libelle'],$this->getOrder(),$this->getOffset(), $this->getLimit());        
-        $return=$this->fieldsToHide($return,array('id'));       
-        $this->docs = $return;       
-        $this->nbFound=count($this->docs);        
-        $this->output['responseHeader']['params']=$this->getParams();      
-        $this->output['responseHeader']['status']=$this->getStatus();        
-        $this->output['response']['total']=$this->getTotal();
-        $this->output['response']['nbFound']=$this->getNbFound();
-        $this->output['response']['totalQueryReturned']=$this->getTotalQueryReturned();
-        $this->output['response']['offset']=$this->getOffset();
-        $this->output['response']['docs']=$this->getDocs();
-        $this->output['responseHeader']['QTime']= microtime(true) - $this->getBeginTime();
-        $this->output=$this->applyFormat($this->output);
+        $return = $this->fieldsToHide($return,array('id'));       
+        //display for bootstrap table
+        if($this->getBootstrapTable()=='true'){
+            if (strpos($return,'"response":')>0)
+                $return = substr($return,strpos($return,'"response":')+11);
+            
+            $return = str_replace('"docs":','"rows":',$return);
+            if(strpos($return,'"totalQueryReturned":')>0) {
+              $return = str_replace('"total":','"allRecords":',$return);
+              $return = substr(str_replace('"totalQueryReturned":','"total":',$return),0, -1);
+            }
+            $this->output['rows']=$return;
+            $this->output['allRecords']=$this->getTotal();
+            $this->output['total']=$this->getTotalQueryReturned();
+            $this->output['offset']=$this->getOffset();
+        //complete display
+        }else {
+            $this->docs = $return;       
+            $this->nbFound=count($this->docs);        
+            $this->output['responseHeader']['params']=$this->getParams();      
+            $this->output['responseHeader']['status']=$this->getStatus();        
+            $this->output['response']['total']=$this->getTotal();
+            $this->output['response']['nbFound']=$this->getNbFound();
+            $this->output['response']['totalQueryReturned']=$this->getTotalQueryReturned();
+            $this->output['response']['offset']=$this->getOffset();
+            $this->output['response']['docs']=$this->getDocs();
+            $this->output['responseHeader']['QTime']= microtime(true) - $this->getBeginTime();
+        }
+            $this->output=$this->applyFormat($this->output);
+        
     }
     
     public function getDocs(){
