@@ -90,37 +90,46 @@
 
         
     function display_table($id, $obj, $maxline, $type, $tableHeight,$collection,$fields) {
-    $myTableForm = "";
-		$myTableForm .= '<div id="div_table_'.$id.'" class="table-responsive" style="">';
-		$myTableForm .= '  <table id="icd_table_'.$id.'" class="table table-sm table-striped table-bordered" style="overflow-y: auto;width:100%;" data-toggle="table" data-height="'.$tableHeight.'" data-side-pagination="server" data-pagination="true"   data-pagination-h-align="left" data-page-list="[]" data-row-style="rowStyle" data-page-size='.$maxline.'>';
-		$myTableForm .= '    <thead><tr>';
-    foreach($obj->rows[0] as $key => $value) {
-      if($key != 'id') $myTableForm .= '      <th data-field="'.$key.'">'.ucfirst($key).'</th>';
-    }
-    $myTableForm .= '    </tr></thead>';
-    $myTableForm .= '	';
-    $myTableForm .= '  </table>';
-    $myTableForm .= '</div>';
-    $myTableForm .= '</div>';
+        $myTableForm = "";
+            $myTableForm .= '<div id="div_table_'.$id.'" class="table-responsive" style="">';
+            $myTableForm .= '  <table id="icd_table_'.$id.'" class="table table-sm table-striped table-bordered" style="overflow-y: auto;width:100%;" data-toggle="table" data-height="'.$tableHeight.'" data-side-pagination="server" data-pagination="true"   data-pagination-h-align="left" data-page-list="[]" data-row-style="rowStyle" data-page-size='.$maxline.'>';
+            $myTableForm .= '    <thead><tr>';
+        foreach($obj->rows[0] as $key => $value) {
+          if($key != 'id') $myTableForm .= '      <th data-field="'.$key.'">'.ucfirst($key).'</th>';
+        }
+        $myTableForm .= '    </tr></thead>';
+        $myTableForm .= '	';
+        $myTableForm .= '  </table>';
+        $myTableForm .= '</div>';
+        $myTableForm .= '</div>';
 
 
-    $myTableForm .= '<script>';
-    $myTableForm .= '  var table_'.$id.' = $("#icd_table_'.$id.'");';
-    $myTableForm .= '  table_'.$id.'.bootstrapTable({formatNoMatches: function () {return "Aucun resultats trouve ";},formatShowingRows: function (pageFrom, pageTo, totalRows) {return "showing "+pageFrom+" to "+pageTo+" of "+totalRows+" record";}});';
+        $myTableForm .= '<script>';
+        $myTableForm .= '
+                            $("#search_data_'.$id.'").keyup(function(e){
+                                if(e.keyCode == 13)
+                                {
+                                    search'.$type.'_'.$id.'();
+                                }
+                            });';
 
-    $myTableForm .= '  function search'.$type.'_'.$id.'() {';
-    $myTableForm .= '    var param = $("#search_data_'.$id.'").val();';
-    $myTableForm .= '    myUrl = "http://serco.sipr.ucl.ac.be/'.$_SERVER['PHP_SELF'].'?related='.$type.':'.$collection.'&format=json&bootstrapTable&query="+param;';
-    $myTableForm .= '    table_'.$id.'.bootstrapTable("refresh",{url: myUrl});';
-    $myTableForm .= '    table_'.$id.'.bootstrapTable("selectPage", 1);';
-    $myTableForm .= '  }';
-    $myTableForm .= '  function rowStyle(row, index) {';
-    $myTableForm .= '  	return {';
-   	$myTableForm .= '  		classes: "",';
-   	$myTableForm .= '  		css: {"font-size": "12px;padding:1px;"}';
-    $myTableForm .= '   };';
-    $myTableForm .= '  }';	
-    $myTableForm .= '</script>';
-    $myTableForm .= '</body></html>';
-    return $myTableForm;
+
+        $myTableForm .= '  var table_'.$id.' = $("#icd_table_'.$id.'");';
+        $myTableForm .= '  table_'.$id.'.bootstrapTable({formatNoMatches: function () {return "Aucun resultats trouve ";},formatShowingRows: function (pageFrom, pageTo, totalRows) {return "showing "+pageFrom+" to "+pageTo+" of "+totalRows+" record";}});';
+
+        $myTableForm .= '  function search'.$type.'_'.$id.'() {';
+        $myTableForm .= '    var param = $("#search_data_'.$id.'").val();';
+        $myTableForm .= '    myUrl = "http://serco.sipr.ucl.ac.be/'.$_SERVER['PHP_SELF'].'?related='.$type.':'.$collection.'&format=json&bootstrapTable&query="+param;';
+        $myTableForm .= '    table_'.$id.'.bootstrapTable("refresh",{url: myUrl});';
+        $myTableForm .= '    table_'.$id.'.bootstrapTable("selectPage", 1);';
+        $myTableForm .= '  }';
+        $myTableForm .= '  function rowStyle(row, index) {';
+        $myTableForm .= '  	return {';
+        $myTableForm .= '  		classes: "",';
+        $myTableForm .= '  		css: {"font-size": "12px;padding:1px;"}';
+        $myTableForm .= '   };';
+        $myTableForm .= '  }';	
+        $myTableForm .= '</script>';
+        $myTableForm .= '</body></html>';
+        return $myTableForm;
   } 
