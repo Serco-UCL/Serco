@@ -6,3 +6,23 @@
 .optionChild {
     padding-left: 15px;
 }
+
+#head_include{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    background-color: white;
+    z-index: 999;
+    padding-left: 5px;
+}
+
+#part2_include{
+    position: absolute;
+    top: 90px;
+    width: 100%;
+
+}
+#body_include{
+    /*padding : 5px;*/
+
+}

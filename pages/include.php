@@ -46,7 +46,7 @@
     $maxline = intval((isset($input['maxline'])) ? $input['maxline'] : 20);
     $order = ((isset($input['order']) && ( $input['order']=='ASC' || $input['order']=='DESC' )) ? $input['order'] : 'ASC');   
 
-    $response = file_get_contents('http://serco.sipr.ucl.ac.be/'.$_SERVER['PHP_SELF'].'?related='.$CollectionType.':'.$collection.'&format=json&bootstrapTable&query=',False,$cxContext);
+    $response = file_get_contents('https://'.$_SERVER[HTTP_HOST].'/'.$_SERVER['PHP_SELF'].'?related='.$CollectionType.':'.$collection.'&format=json&bootstrapTable&query=',False,$cxContext);
 
     $coll=new Collection($CollectionType,$collection);
     $fields = $coll->getFields();
@@ -58,7 +58,8 @@
     $myForm = '';
     $myForm.="<html>";
     $myForm.= include('./pages/header.php');   
-    $myForm .=  '<div class="">';
+    $myForm .=  '<div id="body_include" class="">';
+    $myForm .=  '<div id="head_include">';
     $myForm .=  '<p class="h3">'.$coll->getNameCol().'</p>';
     $myForm .=  '<div style="background-color:transparent;">';
     $myForm .=  '<form>';
@@ -70,8 +71,11 @@
     $myForm .=  '</div>';
     $myForm .=  '</form>';
     $myForm .=  '</div>';
+    $myForm .=  '</div>';
+    $myForm .=  '<div id="part2_include" class="">';
     $myForm .=  '<div class="">';
     $myForm .= display_table($id, $obj, $maxline, $CollectionType, $tableHeight,$collection,$fields);
+    $myForm .=  '</div>';
     $myForm .=  '</div>';
     $myForm .=  '<script>';
     $myForm .=  '  $(document).on("keypress", "input", function(e) {';	
@@ -119,7 +123,7 @@
 
         $myTableForm .= '  function search'.$type.'_'.$id.'() {';
         $myTableForm .= '    var param = $("#search_data_'.$id.'").val();';
-        $myTableForm .= '    myUrl = "http://serco.sipr.ucl.ac.be/'.$_SERVER['PHP_SELF'].'?related='.$type.':'.$collection.'&format=json&bootstrapTable&query="+param;';
+        $myTableForm .= '    myUrl = "../'.$_SERVER['PHP_SELF'].'?related='.$type.':'.$collection.'&format=json&bootstrapTable&query="+param;';
         $myTableForm .= '    table_'.$id.'.bootstrapTable("refresh",{url: myUrl});';
         $myTableForm .= '    table_'.$id.'.bootstrapTable("selectPage", 1);';
         $myTableForm .= '  }';
