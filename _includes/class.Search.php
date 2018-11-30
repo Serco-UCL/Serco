@@ -92,16 +92,18 @@ class Search extends Request{
         if($this->getIm() == '' || $this->getIm() == "q" || $this->getIm() == "query"){
             $json= '{"query": {"query_string" : {"fields" : ["description", "code"], "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' }';
             $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
+            print_r($json);
         }
         elseif ($this->getIm() == "s" || $this->getIm() == "suggest"){
-            // $json= '{"query": {"query_string" : {"fields" : ["description", "code"], "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' }';
             $json='{"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "description.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "description.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
             $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
         }
         elseif( $this->getIm() == "sq" || $this->getIm() == "qs"){
-            ///TO DO ====> GET REQUEST TO AYOUB TO HAVE RESULT IN ONE REQUEST
-            // $json='{"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "description.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "description.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
-            // $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
+            //query request
+            $json= '{"query": {"query_string" : {"fields" : ["description", "code"], "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' ,';
+            //suggest request
+            $json.='"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "description.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "description.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
+            $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
         }
 
         return json_decode( $this->getElastic()->getResultSearch($url,$json),true);
@@ -109,22 +111,20 @@ class Search extends Request{
     }
 
     public function getResponseArray($response){
+        //if integration mode == suggest
+        if ($this->getIm() == "s" || $this->getIm() == "suggest" || $this->getIm() == "sq" || $this->getIm() == "qs"){
+            $result=$response['suggest']['simple_phrase'][0]['options'];
+            for($i=0;$i<count($result);$i++){
+                $tbreturn['suggest'][$i]=$result[$i]['text'];
+            }
+        }
         //if integration mode == query
-        $i2=0;
         if($this->getIm() == '' || $this->getIm() == "q" || $this->getIm() == "query" || $this->getIm() == "sq" || $this->getIm() == "qs"){
             $result=$response['hits']['hits'];
             for($i=0;$i<count($result);$i++){
                 $tbreturn['query'][$i]=$result[$i]['_source'];
-                $i2++;
             }
         }
-        if ($this->getIm() == "s" || $this->getIm() == "suggest" || $this->getIm() == "sq" || $this->getIm() == "qs"){
-            $result=$response['suggest']['simple_phrase'][0]['options'];
-            for($i=$i2;$i<(count($result)+$i2);$i++){
-                $tbreturn['suggest'][$i]=$result[$i]['text'];
-            }
-        }
-        //get nb return of request without limit et offset
         return $tbreturn;
     }
 
