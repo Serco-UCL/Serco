@@ -45,10 +45,12 @@ class Collection_Type
     public function __construct($ref) {
             $db = new DBConnection();  
 //            get information about collection type based on ref
-            $return = $db->getDbResult('Collection_Type',array('ref'=>$ref));
-            
+            $return = $db->getDbResult('Collection_Type',array('ref'=>$ref),"*",'', 'ASC', "0", "18446744073709551615",' = ');      
+//                           getDbResult($tableName,$params=array(),$select="*",$orderBy='', $order='ASC', $offset="0", $limit="18446744073709551615",$equal='like'){   
+
             $this->id =$return[0]['id'];
             $this->ref =$return[0]['ref'];
+//            $this->ref =$ref;
             $this->name =$return[0]['name'];
             $this->description =$return[0]['description'];
             $this->defaultColl =$return[0]['defaultColl'];
@@ -56,6 +58,7 @@ class Collection_Type
             
             //get collections linked to this collection type
             $this->collections = $db->getDbResult('Collection',array('xid_CollectionType'=>$this->id));            
+            
             //getfields linked to the collection type        
             $this->fields = $db->getDbResult('Fields',array('xid_CollectionType'=>$this->id),"*","priority");   
     }    
@@ -70,5 +73,9 @@ class Collection_Type
         
     public function getDefaultColl(){
         return $this->defaultColl;
+    }  
+        
+    public function getName(){
+        return $this->name;
     }  
 }

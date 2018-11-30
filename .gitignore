@@ -1,2 +1,5 @@
 _config/config.php
-
+test*
+*.bac
+*.csv
+ingest.sh

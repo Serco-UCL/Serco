@@ -37,6 +37,7 @@ class Collection extends Collection_Type
     private $ref_coll ;
     private $name_coll;
     private $description_coll;
+    private $engine_coll;
     private $xid_CollectionType;
     private $last_update;
     private $return;
@@ -51,11 +52,16 @@ class Collection extends Collection_Type
             $this->ref_coll =$return[0]['ref'];
             $this->name_coll =$return[0]['name'];
             $this->description_coll =$return[0]['description'];
+            $this->engine_coll =$return[0]['engine'];
             $this->xid_CollectionType =$return[0]['xid_CollectionType'];
             $this->last_update =$return[0]['last_update'];  
     }
     
     function getNameCol(){
         return $this->name_coll;
+    }
+    
+    function getEngineCol(){
+        return $this->engine_coll;
     }
 }

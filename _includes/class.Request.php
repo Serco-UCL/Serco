@@ -45,6 +45,7 @@ class Request{
     private $offset;
     private $limit;
     private $query;
+    private $im; // interogation mode ( suggest || query || both)
     private $docs;
     private $order;
     private $bootstrapTable;
@@ -55,15 +56,18 @@ class Request{
 
     public function __construct($input) {
         global $config;
-        $this->params = $input;      
-        $this->status = 1;              
-        //    init params default value    
+        $this->params = $input;
+        $this->status = 1;
+        //    init params default value
         if(isset($input['related'])){
 //            if collection not specified, collection = default collection of the collection type
             $related=explode(":",$input['related']);
             if(count($related)>=2){
                 $this->collectionType=$related[0];
                 $this->collection=$related[1];
+                for($i=2;$i<count($related);$i++){
+                    $this->collection.=":".$related[$i];
+                }
             }
             elseif(count($related)==1){
                 $this->collectionType=$related[0];
@@ -72,17 +76,18 @@ class Request{
             }
             else
                 $this->error="Collection type not specified";
-        }  
+        }
         $this->lang = (isset($input['lang']) && ($input['lang'] == 'fr' || $input['lang'] == 'en')) ? $input['lang'] : $config['defautLocale'];
         $this->query= (isset($input['query'])) ? $input['query'] : '';
         $this->offset = intval((isset($input['offset'])) ? $input['offset'] : '0');
         $this->limit = intval((isset($input['limit'])) ? $input['limit'] : '99999999999999999999');
         $this->format = (isset($input['format'])) ? $input['format'] : 'json';
-        $this->order = ((isset($input['order']) && ( $input['order']=='ASC' || $input['order']=='DESC' )) ? $input['order'] : 'ASC');  
-        $this->bootstrapTable = ((isset($input['bootstrapTable']) ) ? 'true' : 'false');  
-                
+        $this->order = ((isset($input['order']) && ( $input['order']=='ASC' || $input['order']=='DESC' )) ? $input['order'] : 'ASC');
+        $this->bootstrapTable = ((isset($input['bootstrapTable']) ) ? 'true' : 'false');
+        $this->im = ( ( ( isset($input['im']) ) && $input['im']!="" )  ? $input['im'] : '');
+
     }
-    
+
     public function getDocs(){
         return $this->docs;
     }
@@ -92,7 +97,7 @@ class Request{
     public function getNbFound(){
         return $this->nbFound;
     }
-    
+
     public function getTotalQueryReturned(){
         return $this->totalQueryReturned;
     }
@@ -104,7 +109,7 @@ class Request{
     }
     public function getQTime(){
         return $this->QTime;
-    }    
+    }
     public function getParams(){
         return $this->params;
     }
@@ -126,7 +131,7 @@ class Request{
     public function getOrder(){
         return $this->order;
     }
-    
+
     public function getBootstrapTable(){
         return $this->bootstrapTable;
     }
@@ -142,14 +147,21 @@ class Request{
     public function getBeginTime(){
         return $this->beginTime;
     }
-        
+    public function getIm(){
+        return $this->im;
+    }
+    public function setLimit($limit){
+        $this->limit=$limit;
+    }
+
+
     /**
      * return an array without the specified args
      *
      * @param Array $array array to parse
      * @param String $args value to unset from the array
      *
-     * @return Array 
+     * @return Array
      */
     public function fieldsToHide($array, $args){
         foreach ($args as &$value) {
@@ -160,17 +172,21 @@ class Request{
             }
         }
         return $array;
-    }  
-        
+    }
+
     /**
      * return the array in the format asked in the request or JSON if not specified
      *
      * @param Array $output array to format
      *
-     * @return Array 
+     * @return Array
      */
-    public function applyFormat($output){                
-        if($this->getFormat() == 'xml'){
+    public function applyFormat($output){
+
+        if($this->getFormat() == 'elastic'){
+            $output = $this->elastic_encode($output);
+        }
+        else if($this->getFormat() == 'xml'){
             $output = $this->xml_encode($output);
         }else if($this->getFormat() == 'html'){
             $output = $this->html_encode($output);
@@ -186,7 +202,7 @@ class Request{
     *
     * @return Array
     */
-    public function html_encode($mixed){        
+    public function html_encode($mixed){
         return '<pre>' . var_export($mixed, true) . '</pre>';
     }
     /**
@@ -194,7 +210,7 @@ class Request{
      *
      * @param Array $mixed Array to encode
      *
-     * @return Array 
+     * @return Array
      */
     public function xml_encode($mixed, $domElement = null, $DOMDocument = null)
     {
@@ -235,6 +251,17 @@ class Request{
                 $domElement->appendChild($DOMDocument->createTextNode($mixed));
             }
         }
+    }
+    public function elastic_encode($output){
+        $index=strtolower($output['responseHeader']['params']['related']);
+        $index1=explode(':',$index);
+        $datas=$output['response']['docs'];
+        $output="";
+        for($i=0;$i<count($datas);$i++){
+            $output.='{"index":{"_index": "'.$index1[0].'_'.$index1[1].'s","_type":"_doc","_id":'.$i.'}}'.PHP_EOL;
+            $output.=json_encode($datas[$i]).PHP_EOL;
+        }
+        return ($output);
     }
 
 

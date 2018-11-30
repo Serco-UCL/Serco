@@ -71,18 +71,40 @@ class DBConnection
      *
      * @return Array 
      */
-    public function  getDbResult($tableName,$params=array(),$select="*",$orderBy='', $order='ASC', $offset="0", $limit="18446744073709551615"){   
+    public function  getDbResult($tableName,$params=array(),$select="*",$orderBy='', $order='ASC', $offset="0", $limit="18446744073709551615",$equal='like'){   
         global $config;
         try { 
             $dbh = $this->dbh;
             $keys=array_keys($params);   
             $where = ' 1 ';
             if(count($keys)>0){
-                $where = "$keys[0] like :$keys[0]";
-                for($i=1;$i<count($keys);$i++){
-                    $where .= " OR $keys[$i] like :$keys[$i] ";
+                $where="";
+
+                $keysTable= explode(" ", $params[$keys[0]]);                    
+                for($i=0;$i<count($keysTable);$i++){ 
+                    if($i==0){
+                        $where .= "(";
+                        for($i2=0;$i2<count($keys);$i2++){ 
+                            if($i2!=0)
+                                $where.=" OR ";
+                            
+                            $where .= " $keys[$i2] $equal :$keys[$i2]_$i ";
+                        } 
+                        $where .= ")";                        
+                    }
+                    else{        
+                        $where .= " AND (";                    
+                        for($i2=0;$i2<count($keys);$i2++){ 
+                            if($i2!=0)
+                                $where.=" OR ";
+                            
+                            $where .= " $keys[$i2] $equal :$keys[$i2]_$i ";                     
+                        }     
+                        $where .= ")";
+                    }
                 }
             }
+            
             if($orderBy!='')
                 $sql = 'SELECT '.$select.' FROM '.$config['DBprefix'].$tableName.' WHERE '.$where.' ORDER BY '.$orderBy.' '.$order.' LIMIT '.$offset.', '.$limit.' ';
             else
@@ -90,7 +112,13 @@ class DBConnection
             
             $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             foreach ($params as $key => $value) {
-                 $sth->bindValue($key, '%'.$value.'%', PDO::PARAM_STR);
+                    $values= explode(" ", $value);
+                    for($i=0;$i<count($values);$i++){
+                        if($equal=='like') 
+                            $values[$i]='%'.$values[$i].'%';
+                        
+                        $sth->bindValue($key."_$i", $values[$i], PDO::PARAM_STR);
+                    }
             }
 
             $sth->execute();
@@ -124,7 +152,6 @@ class DBConnection
                     $where.=" OR $keys[$i] like :$keys[$i] ";
                 }
             }
-
             $sql = 'SELECT COUNT(*) FROM '.$config['DBprefix'].$tableName.' WHERE '.$where;
             $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             foreach ($params as $key => $value) {

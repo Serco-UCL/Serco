@@ -23,40 +23,47 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
-
-
+     $config = include('./_config/config.php');
+     if(isset($config['debug']) && $config['debug']){
+         error_reporting(E_ALL);
+         ini_set('display_errors', TRUE);
+         ini_set('display_startup_errors', TRUE);
+     }
     foreach (glob("./_includes/*.php") as $filename)
     {
         require_once $filename;
     }
-    $config = include('./_config/config.php');
+    foreach (glob("./model/*.php") as $filename)
+    {
+        require_once $filename;
+    }
 
     $input = array_merge($_GET, $_POST);
     if(isset($input['lang']) && ($input['lang']=='en' || $input['lang']=='fr' ))
        $locale=$input['lang'];
-    else 
+    else
         $locale=$config['defautLocale'];
-    
+
     if(!isset($input['action']) || $input['action']=='')
         $input['action']='rest';
-    
+
     switch ($input['action']){
-        case "rest" :            
+        case "rest" :
             require_once './pages/'.'rest.php';
             break;
-        case "contact" :            
+        case "contact" :
             require_once './pages/'.'contact.php';
             break;
             break;
-        case "include" :            
+        case "include" :
             require_once './pages/'.'include.php';
             break;
 
     }
-        
-function get_text($locale,$ref){ 
+
+function get_text($locale,$ref){
     if(file_exists('./_templates/'.$locale.'/translation.php')){
         include './_templates/'.$locale.'/translation.php';
-        return $string[$ref];  
+        return $string[$ref];
     }
 }

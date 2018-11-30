@@ -10,8 +10,9 @@ $return='<?xml version="1.0" encoding="utf-8"?>
 session_start(); 
 $return.= include('./pages/header.php');    
 
-$obj=get_data('http://serco.sipr.ucl.ac.be'.$_SERVER['PHP_SELF'].'?info');
-
+$obj=get_data('https://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?info');
+echo $_SERVER['HTTP_HOST']; 
+echo $_SERVER['PHP_SELF']; 
 $return.='       
     <body>  
         <div class="container py-5">
@@ -114,11 +115,11 @@ else{
                 <div id="collInfos" >
                     <div class="form-group">
                         <label for="colLib">'.get_text($locale,"colLib").'</label>
-                        <input type="text" class="form-control" id="colLib" name="colLib" value="'.$colLib.'"  placeholder="'.get_text($locale,'entercolLib').'" required>
+                        <input type="text" class="form-control" id="colLib" name="colLib" value="'.$colLib.'"  placeholder="'.get_text($locale,'entercolLib').'" >
                     </div>
                     <div class="form-group">
                         <label for="colDesc">'.get_text($locale,"colDesc").'</label>
-                        <input type="text" class="form-control" id="colDesc" name="colDesc" value="'.$colDesc.'"  placeholder="'.get_text($locale,'entercolDesc').'" required>
+                        <input type="text" class="form-control" id="colDesc" name="colDesc" value="'.$colDesc.'"  placeholder="'.get_text($locale,'entercolDesc').'" >
                     </div>
                 </div>
 
@@ -171,14 +172,30 @@ else{
             if($('#Select1').val() != '1' && $('#Select1').val() != '4' && $('#Select1').val() != '0'){ 
                 $('#linkedCol').show();
             }
+            else{
+                $('#linkedCol').hide();
+
+            }
+            if($('#Select1').val() == '0' || $('#Select1').val() == '2' || $('#Select1').val() == '3' || $('#Select1').val() == '4'){ 
+                $('#collInfos').hide();
+                $('#colLib').prop('required',false);
+                $('#colDesc').prop('required',false); 
+
+            }
+
 
             //Hide/show collections info
             $('#Select1').change(function(){
                if($(this).val() == '1'){ 
                    $('#collInfos').show();
+                   $('#colLib').attr('required', 'true');
+                   $('#colDesc').attr('required', 'true');
                }
                else {
                 $('#collInfos').hide();
+                $('#colLib').prop('required',false);
+                $('#colDesc').prop('required',false);
+
                }
             });
 
