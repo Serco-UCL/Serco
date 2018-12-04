@@ -102,7 +102,6 @@ class Request{
     public function getNbFound(){
         return $this->nbFound;
     }
-
     public function getTotalQueryReturned(){
         return $this->totalQueryReturned;
     }
@@ -136,7 +135,6 @@ class Request{
     public function getOrder(){
         return $this->order;
     }
-
     public function getBootstrapTable(){
         return $this->bootstrapTable;
     }
@@ -194,12 +192,17 @@ class Request{
      */
     public function applyFormat($output){
         global $config;
+
         if($this->getFormat() == 'elastic'){
             $output = $this->elastic_encode($output);
         }
         else if($this->getFormat() == 'xml'){
             $output = $this->xml_encode($output);
-        }else if($this->getFormat() == 'html' && $config['debug']){
+        }
+        else if($this->getFormat() == 'jsonp'){
+            $output = $this->jsonp_encode($output);
+        }
+        else if($this->getFormat() == 'html' && $config['debug']){
             $output = $this->html_encode($output);
         }else
            $output = json_encode($output);
@@ -215,6 +218,22 @@ class Request{
     */
     public function html_encode($mixed){
         return '<pre>' . var_export($mixed, true) . '</pre>';
+    }
+
+    /**
+    * Encode the array in json-p
+    *
+    * @param Array $mixed Array to encode
+    *
+    * @return json-p
+    */
+    public function jsonp_encode($mixed){
+        global $input;
+        $callback = 'callback';
+        if(isset($input['callback']) && $input['callback'] != '')
+            $callback = $input['callback'];
+
+        return $callback.'('. json_encode($mixed) .')';
     }
     /**
      * Encode the array in xml
