@@ -146,7 +146,11 @@ class Search extends Request{
                 $tbreturn['query'][$i]=$result[$i]['_source'];
             }
         }
-        return $tbreturn;
+        if(isset($tbreturn))
+            return $tbreturn;
+
+        else
+            return null;
     }
 
     public function getTotalQueryReturnedFromResponse($response){
