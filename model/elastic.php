@@ -29,10 +29,13 @@
   */
  class Elastic
  {
+     private $debug;
 
      function __construct()
      {
-         // code...
+         global $config;
+         global $input;
+         $this->setDebug(new Debug($config['debug'],$input));
      }
 
      public function getResultSearch($url,$json){
@@ -44,6 +47,9 @@
              'Content-Type: application/json',
              'Content-Length: ' . strlen($json))
          );
+         $this->getDebug()->display ('debugRequest','URL : '.$url. '<br>' );
+         $this->getDebug()->display ('debugRequest','JSON : '.$json. '<br>' );
+
          $result=curl_exec($ch);
          return($result);
      }
@@ -57,5 +63,12 @@
          curl_close($ch);
 
          return json_decode($result, true);
+     }
+
+     public function getDebug(){
+         return $this->debug;
+     }
+     public function setDebug($debug){
+         $this->debug=$debug;
      }
  }

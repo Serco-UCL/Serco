@@ -36,12 +36,16 @@ require_once dirname(__FILE__).'/class.DBConnection.php';
 class Search extends Request{
     private $elastic;
     private $db;
+    private $fieldSeachable;
 
     public function __construct($input) {
         parent::__construct($input);
+        global $config;
+
         $this->beginTime = microtime(true);
+        $debug=new Debug($config['debug'],$input);
+        $debugTypeTime='debugTime';
         $db = new DBConnection();
-        // $elastic = new Elastic();
         $this->setElastic(new Elastic());
 
         $coll = new Collection_Type($this->getCollectionType());
@@ -49,15 +53,19 @@ class Search extends Request{
         $collection=new Collection($this->getCollectionType(),$this->getCollection());
         $engine=$collection->getEngineCol();
 
+        //get searchable fields
+        $DBTableName= $this->getCollectionType()."_".$this->getCollection();
+        for($i=0;$i<count($fields);$i++){
+            $fiedsLabel[$i]=$fields[$i]['libelle'];
+            if($fields[$i]['searchable']=="1")
+                $queryTable[$fields[$i]['libelle']]=$this->getQuery();
+        }
+
+        $this->setFieldSeachable(array_keys($queryTable));
+        // print_r($keys);
+
         if($engine=='db'){
             //prepare data
-            $DBTableName= $this->getCollectionType()."_".$this->getCollection();
-            for($i=0;$i<count($fields);$i++){
-                $fiedsLabel[$i]=$fields[$i]['libelle'];
-
-                if($fields[$i]['searchable']=="1")
-                $queryTable[$fields[$i]['libelle']]=$this->getQuery();
-            }
             $select = implode (", ", $fiedsLabel);
             //get number of rows
             $this->total = $db->getNbTableRows($DBTableName);
@@ -67,43 +75,56 @@ class Search extends Request{
             $return = $db->getDbResult($DBTableName,$queryTable,$select,$fields[0]['libelle'],$this->getOrder(),$this->getOffset(), $this->getLimit());
         }
         else if($engine=='elastic'){
+
             $index=strtolower($this->getCollection());
             //Get count of avaiable response in the collection
             $this->total = $this->getElastic()->getTotalAnswer($index)['count'];
+            $this->output['responseHeader']['QTime']= $this->getTimeFromBegining();
             //Parse query to match with conf asked
             $query=$this->getParsedQuery();
             //check if limit is correct and <10000 (elastic limitation)
             $this->setLimit($this->getMaxLimit());
+            $debug->display ('debugTime','time Before elastic request : '.$this->getTimeFromBegining(). '<br>' );
             //get elastic output
             $response=$this->getAnswer($query);
+            $debug->display ('debugTime','time after elastic request : '.$this->getTimeFromBegining(). '<br>' );
             //Get only the result of search in an array
             $return=$this->getResponseArray($response);
             //Get count of results
             $this->totalQueryReturned= $this->getTotalQueryReturnedFromResponse($response);
+
         }
         $this->populateResponseForSerco($return);
+        $debug->display ('debugTime','time total: '.$this->getTimeFromBegining(). '<br>' );
         $this->output=$this->applyFormat($this->output);
     }
 
     public function getAnswer($query){
+        global $config;
         $index=strtolower($this->getCollection());
+        //get table with searcheable fields
+        $tbSearchFields=$this->getFieldSeachable();
+        //convert to json for the request
+        $SearchFields=(json_encode($tbSearchFields));
+        //get the fields used for suggest
+        $suggestFields=$tbSearchFields[1];
 
         //if integration mode == query
         if($this->getIm() == '' || $this->getIm() == "q" || $this->getIm() == "query"){
-            $json= '{"query": {"query_string" : {"fields" : ["description", "code"], "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' }';
-            $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
-            print_r($json);
+            $json= '{"query": {"query_string" : {"fields" : '.$SearchFields.', "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' }';
+            $url=$config["elasticDomain"].':'.$config["elasticPort"].'/'.$index.'/_search';
+            // print_r($json);
         }
         elseif ($this->getIm() == "s" || $this->getIm() == "suggest"){
-            $json='{"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "description.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "description.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
-            $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
+            $json='{"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "'.$suggestFields.'.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "'.$suggestFields.'.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
+            $url=$config["elasticDomain"].':'.$config["elasticPort"].'/'.$index.'/_search';
         }
         elseif( $this->getIm() == "sq" || $this->getIm() == "qs"){
             //query request
-            $json= '{"query": {"query_string" : {"fields" : ["description", "code"], "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' ,';
+            $json= '{"query": {"query_string" : {"fields" : '.$SearchFields.', "query" : "'.$query.'"}}, "size": '.$this->getLimit().',"from": '.$this->getOffset().' ,';
             //suggest request
-            $json.='"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "description.trigram","size" : '.$this->getLimit().', "max_errors": 20, "direct_generator" : [ { "field" : "description.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
-            $url='http://serco.sipr.ucl.ac.be:9200/'.$index.'/_search';
+            $json.='"suggest": { "text" : "'.$this->getQuery().'", "simple_phrase" : { "phrase" : { "field" : "'.$suggestFields.'.trigram","size" : 5, "max_errors": 20, "direct_generator" : [ { "field" : "'.$suggestFields.'.trigram",  "suggest_mode" : "always" } ], "highlight": { "pre_tag": "<em>", "post_tag": "</em>" }} }}}';
+            $url=$config["elasticDomain"].':'.$config["elasticPort"].'/'.$index.'/_search';
         }
 
         return json_decode( $this->getElastic()->getResultSearch($url,$json),true);
@@ -129,6 +150,7 @@ class Search extends Request{
     }
 
     public function getTotalQueryReturnedFromResponse($response){
+        // print_r($response);
         return $response['hits']['total'];
     }
 
@@ -184,6 +206,9 @@ class Search extends Request{
         return $query;
     }
 
+    public function getTimeFromBegining(){
+        return (microtime(true) - $this->getBeginTime());
+    }
     public function getDocs(){
         return $this->docs;
     }
@@ -216,6 +241,12 @@ class Search extends Request{
     }
     public function setElastic($elastic){
         $this->elastic=$elastic;
+    }
+    public function getFieldSeachable(){
+        return $this->fieldSeachable;
+    }
+    public function setFieldSeachable($fieldSeachable){
+        $this->fieldSeachable=$fieldSeachable;
     }
 
 }

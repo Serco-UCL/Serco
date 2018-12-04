@@ -53,9 +53,14 @@ class Request{
     private $lang;
     private $output;
     private $beginTime;
+    private $debug;
 
     public function __construct($input) {
         global $config;
+        if(isset($input['debug']))
+        $debug=new Debug($config['debug'],$input);
+
+
         $this->params = $input;
         $this->status = 1;
         //    init params default value
@@ -152,6 +157,12 @@ class Request{
     }
     public function setLimit($limit){
         $this->limit=$limit;
+    }
+    public function getDebug(){
+        return $this->debug;
+    }
+    public function setDebug($debug){
+        $this->debug=$debug;
     }
 
 
