@@ -193,13 +193,13 @@ class Request{
      * @return Array
      */
     public function applyFormat($output){
-
+        global $config;
         if($this->getFormat() == 'elastic'){
             $output = $this->elastic_encode($output);
         }
         else if($this->getFormat() == 'xml'){
             $output = $this->xml_encode($output);
-        }else if($this->getFormat() == 'html'){
+        }else if($this->getFormat() == 'html' && $config['debug']){
             $output = $this->html_encode($output);
         }else
            $output = json_encode($output);
